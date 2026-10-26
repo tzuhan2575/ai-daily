@@ -1,0 +1,10 @@
+{
+  "track": "AI 工程師的基礎到實戰",
+  "updated": "2026-10-26",
+  "weeks": [
+    {"week": 1, "title": "LLM 運作基礎", "topics": ["token 與計價", "上下文視窗", "KV cache", "量化"], "status": "current"},
+    {"week": 2, "title": "Agent 與工具使用", "topics": ["tool use", "MCP", "Agent Skills", "多代理人"], "status": "next"},
+    {"week": 3, "title": "評測與選型", "topics": ["benchmark 怎麼看", "成本與延遲", "開放權重 vs 閉源"], "status": "next"},
+    {"week": 4, "title": "本地跑小模型", "topics": ["GGUF 與量化格式", "硬體需求估算", "本地推論工具"], "status": "next"}
+  ]
+}

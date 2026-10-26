@@ -1,0 +1,6 @@
+# 來源清單（階段 0：先少量）
+hn: https://hn.algolia.com/api/v1/search_by_date?query=AI&tags=story&numericFilters=points%3E60&hitsPerPage=40
+hf_papers: https://huggingface.co/api/daily_papers?limit=10
+openai: https://openai.com/news/rss.xml
+deepmind: https://deepmind.google/blog/rss.xml
+anthropic: https://www.anthropic.com/news

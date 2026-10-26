@@ -1,0 +1,1 @@
+{"name": "AI 日報", "short_name": "AI 日報", "start_url": "./index.html", "display": "standalone", "background_color": "#faf7f2", "theme_color": "#e4572e", "icons": [{"src": "assets/icon-180.png", "sizes": "180x180", "type": "image/png"}, {"src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml"}]}
