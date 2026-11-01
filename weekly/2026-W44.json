@@ -1,0 +1,40 @@
+{
+  "week": "2026-W44",
+  "range": "10/26–11/1",
+  "summary": [
+    "本週最直接和你相關的消息是 Agent Skills 標準被捐給 Linux Foundation 旗下的 Agentic AI Foundation（AAIF）。官方說已有超過 70 個代理人平台整合；你日常用的 skills 格式因此更中立、跨工具。",
+    "Anthropic 向美國證管會提交 S-1、準備 IPO，同時成立公益基金（承諾約 5% 股份）。短期不影響你的使用與計價；長期公開揭露可能讓平台穩定度更容易判斷（推測）。",
+    "資安方面，Cyber Verification Program 擴大為三級權限，只有逆向、攻擊模擬這類工作才需要申請，一般公開模型的審碼能力對你目前的專案已夠用。",
+    "政策與公部門消息（METR 類員工評測、美國期中選舉防護、新加坡辦公室、GSA 四折優惠、生命科學客座研究者）與你目前的專案無直接關係，已標 skip。",
+    "學習方面，第 1 週「LLM 運作基礎」四個主題（token 與計價、上下文視窗、KV cache、量化）都已上完，週四起銜接第 2 週，上了 MCP。"
+  ],
+  "actions": [
+    {
+      "title": "把常重複貼給 AI 的流程做成自己的 skill",
+      "why": "Agent Skills 已是跨工具的開放標準，寫一次可在多個編輯器與代理人使用，不必綁定單一廠商。",
+      "how": "挑一段你最近重複貼給 AI 的流程，建一個資料夾，裡面放 SKILL.md（開頭 YAML frontmatter，之後用 Markdown 寫操作說明），放進 Claude Code 的 skills 目錄試用。步驟見 10/26 的課。"
+    },
+    {
+      "title": "對照 agentskills.io 規格與你現有的 SKILL.md",
+      "why": "標準轉交中立基金會後，之後可能出現版本化或安全指引；先對照可以早點發現落差（推測）。",
+      "how": "讀 agentskills.io 的規格頁，挑你現有的一個 skill，檢查 frontmatter 欄位與目錄結構有沒有和規格不一致的地方。"
+    },
+    {
+      "title": "請 Claude Code 為 Tap Diary 做一次資安審查",
+      "why": "一般公開模型就能做審碼、找已知漏洞與分流警報，不需要申請 Cyber Verification Program；上 Google Play 前先檢查很划算。",
+      "how": "在 Flutter 專案目錄請 Claude Code 檢查相依套件版本（例如 flutter pub outdated）與 Android 權限設定（AndroidManifest.xml），並列出建議修正清單。"
+    },
+    {
+      "title": "等 S-1 內容公開後讀風險因素章節（觀察項）",
+      "why": "你的助理與 Tap Diary 若依賴該公司 API，風險因素章節會寫模型供應與安全政策對客戶的影響；目前不需要改任何東西。",
+      "how": "預備公開說明書公開後，搜尋「風險因素」章節，記下和 API 供應、定價、使用政策有關的段落。"
+    }
+  ],
+  "covered": [
+    "10/26 Agent Skills：把常貼的流程變成你自己的 skill",
+    "10/27 上下文視窗：模型的「工作記憶」到底裝了什麼",
+    "10/28 KV cache 與提示快取：為什麼重複的前綴可以便宜很多",
+    "10/29 量化：把模型權重變小，換取記憶體與速度",
+    "10/30 MCP：讓模型用標準方式呼叫外部工具"
+  ]
+}
