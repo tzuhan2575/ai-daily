@@ -73,6 +73,6 @@ res = []
 for k, f in jobs.items():
     try: res += f()
     except Exception as e: print(f"[warn] {k}: {e}", file=sys.stderr)
-path = f"data/candidates-{datetime.date.today()}.json"
+path = f"data/candidates-{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).date()}.json"
 json.dump(res, open(path, "w"), ensure_ascii=False, indent=1)
 print(len(res), "items ->", path)
