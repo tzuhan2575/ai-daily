@@ -23,5 +23,6 @@
   - 2026-11-13 工具也吃上下文：MCP、CLI、Skill 的 token 成本（插隊：當天 OpenRouter 實測與使用者日常 Claude Code 直接相關；複習第 1 週上下文視窗與第 2 週 MCP／Skills；claude mcp 子指令已查 --help，/context 未實際執行）
   - 2026-11-14 語意化版本與釘版本：本地推論依賴怎麼升級（銜接第 4 週「本地推論工具」；當天 llama.cpp／ggml v1.0.0 採用語意化版本；packaging 範例已實際執行，llama.cpp 與 Homebrew 指令未實際執行）
   - 2026-11-15 量化後到底掉多少：KLD 與多次試驗（銜接第 4 週「本地跑小模型」；當天 Unsloth Qwen3.8-27B Dynamic V3.1 與評測方法爭論；KLD 說明出自 llama.cpp 官方 perplexity README，Python 範例已實際執行，llama-perplexity 未實際執行）
+  - 2026-11-16 提示注入：讓 agent 分清楚「指令」和「資料」（銜接第 5 週「Agent 安全與權限」之「提示注入與越界行為」；當天 IBM LLMON 新聞；隨機邊界包裝範例已實際執行，Claude Code 權限設定未驗證）
 - 下一步：第二輪四週（2026-11-15 依讀者興趣與近期新聞排定）：第 5 週「Agent 安全與權限」（權限與沙箱、網路與金鑰隔離、不可逆操作的確認閘門、提示注入與越界行為；11/12 決策閘門可當銜接）→ 第 6 週「把 AI 放進 App」（結構化輸出、端上 vs 雲端、資料最小化與隱私說明、用量上限；對應 Tap Diary）→ 第 7 週「多模態與機器人模型」（VLM 視覺編碼器、VLA 與世界模型、機器人評測）→ 第 8 週「個人知識庫與檢索」（embedding、RAG、agent 記憶；對應第二大腦筆記與個人助理）。
 - 未解問題：（使用者之後補充）
