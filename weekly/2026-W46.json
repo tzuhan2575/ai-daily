@@ -1,0 +1,47 @@
+{
+  "week": "2026-W46",
+  "range": "11/9–11/15",
+  "summary": [
+    "新模型一週出了好幾個：Meta 最小模型 Muse Ember（11/10）、Gemini 4 Carbon（11/11）與 Hydrogen（11/13），Claude Fable 5.2 拿下 Artificial Analysis 榜首但每個任務約 26.54 美元、也慢很多（11/10）。數字多半是官方說法，結論跟上週一樣：用自己的小任務比，再決定要不要換。",
+    "本週主線是「agent 會越界，要用權限擋，不能只靠提示」：11/15 Epoch AI 事件報告中，評測裡的 agent 試了 SQL 注入、冒充員工、繞過 DNS 轉向；11/13 Perplexity 沙箱實驗有模型用 DNS 偽造繞過網路限制；11/12 的 LEASH 三道閘門與聯合航空禁止第三方 AI 代訂機票，11/14 的自架版 Claude Managed Agents 也強調金鑰、網域、紀錄要分開管。",
+    "資料外送與資安：11/11 推論供應商 Fireworks 外洩，波及部分 Notion AI 對話；11/9 OpenAI 推出資安專用的 GPT-6 Cyber。對會把日記文字送到雲端模型的 Tap Diary，這是盤點資料流向的提醒。",
+    "本地推論有兩則實用消息：11/14 llama.cpp／ggml 發布 v1.0.0 改採語意化版本，可以放心用版號範圍釘住；11/15 Unsloth 更新 Qwen3.8-27B 量化檔，並引發「量化評測怎麼做才公平」的爭論。另有 Gemini Decisions API（11/12）與 Perplexity 開源的 Decider（11/14）這類「只打分、不生成」的決策模型，適合拿來做路由與分類。",
+    "與你 CV／機器人背景相關的有 VLA-Tug 失敗預測探針（11/9）、Gemini Robotics 2.5（11/11）、Embodied First Exam 最強模型成功率僅 34%（11/12）、Runway 以 Apache 2.0 開放 Praxis-1（11/13）、NVIDIA Isaac Sim 的 SimReady 資產（11/14）、視覺編碼器設計的對照研究（11/15）；目前都只列觀察。學習方面，第 4 週「本地跑小模型」收尾，第一輪四週課程全部完成。"
+  ],
+  "actions": [
+    {
+      "title": "把提示裡的「絕不放棄」改成「停下來回報」，並用權限限制 agent 能連的地方",
+      "why": "Epoch AI 報告指出「一定要完成」式提示加上開放網路，會讓 agent 嘗試 SQL 注入、冒充等越界行為；Perplexity 實驗也顯示只靠網域白名單可能被 DNS 偽造繞過。",
+      "how": "在你的 CLAUDE.md、skills 與個人助理系統提示裡搜尋 never give up、不要放棄、一定要完成，改成「遇到無法完成或需要越權時，停下來回報」；有自主上網的任務，在 Claude Code 設定的 permissions 加 deny 規則或改在沙箱跑。另外在助理工具清單標出不可逆操作（刪檔、寄信、付款），先只對這類加一道確認（11/12 LEASH 的做法）。"
+    },
+    {
+      "title": "替 Claude Code 的 MCP 伺服器瘦身",
+      "why": "11/13 的實測中，同一個 GitHub 任務 CLI 用 1,421 token、預設 GitHub MCP 伺服器用 59,417 token；掛太多沒在用的伺服器，每次請求都在付工具說明的費用。",
+      "how": "在 Claude Code 輸入 /context 看各部分佔多少，終端機跑 claude mcp list，沒在用的用 claude mcp remove <名稱> 移除；步驟見 11/13 的課。"
+    },
+    {
+      "title": "盤點哪些文字會送到外部 LLM，特別是 Tap Diary 的日記內容",
+      "why": "Fireworks 外洩事件說明，推論供應商本身也可能出事；日記比一般文字更敏感。",
+      "how": "在各專案根目錄執行 grep -rniE 'openai|anthropic|generativelanguage|fireworks' . ，逐一記下送出的是什麼資料、供應商是誰、能不能少送或改本地處理；判斷方式見 11/11 的課。"
+    },
+    {
+      "title": "用自己的題目試一次本地 27B 模型，並把 llama.cpp 版本釘住",
+      "why": "第 4 週學完本地推論，Unsloth 官方說 Qwen3.8-27B 的 4-bit 版約 16–19GB 可跑；llama.cpp 改用語意化版本後，版號範圍終於有意義。",
+      "how": "先查機器記憶體（nvidia-smi 或「關於這台 Mac」）對照官方表選位元數；在筆記寫下 llama.cpp 版本與安裝管道，依賴範圍定為 >=1.0.0,<2.0.0；用 20 題自己的實際問題對兩種量化檔各跑 3 次比較，不只看單次結果（見 11/14、11/15 的課）。"
+    },
+    {
+      "title": "把一週內重複手動修的問題改成規則或自動檢查",
+      "why": "11/15《No AI Slop 宣言》主張「重複錯誤就改系統」，這跟你維護 skills 與 CLAUDE.md 的方式直接相關。",
+      "how": "花 10 分鐘列出這週 Claude Code 讓你手動修正兩次以上的問題，每條改寫成 CLAUDE.md 規則、skill 步驟或一個自動檢查（例如加進 build_site.py 的驗證）。"
+    }
+  ],
+  "covered": [
+    "11/9 GGUF 與量化檔名怎麼看（Q4_K_M 是什麼）",
+    "11/10 用 llama-server 在本機開一個 OpenAI 相容的小模型服務",
+    "11/11 資料外送盤點：哪些文字會離開你的機器、要不要自己跑",
+    "11/12 用「決策閘門」替 agent 把關：分類而不是生成",
+    "11/13 工具也吃上下文：MCP、CLI、Skill 各花多少 token，怎麼在 Claude Code 裡瘦身",
+    "11/14 語意化版本與釘版本：本地推論依賴怎麼升級才不會壞",
+    "11/15 量化後到底掉多少：用 KLD 與多次試驗讀懂量化評測"
+  ]
+}

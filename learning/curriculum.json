@@ -1,6 +1,6 @@
 {
  "track": "AI 工程師的基礎到實戰",
- "updated": "2026-11-08",
+ "updated": "2026-11-15",
  "weeks": [
   {
    "week": 1,
@@ -42,7 +42,49 @@
     "硬體需求估算",
     "本地推論工具"
    ],
+   "status": "done"
+  },
+  {
+   "week": 5,
+   "title": "Agent 安全與權限",
+   "topics": [
+    "權限與沙箱",
+    "網路與金鑰隔離",
+    "不可逆操作的確認閘門",
+    "提示注入與越界行為"
+   ],
    "status": "current"
+  },
+  {
+   "week": 6,
+   "title": "把 AI 放進 App",
+   "topics": [
+    "結構化輸出",
+    "端上推論 vs 雲端",
+    "資料最小化與隱私說明",
+    "成本與用量上限"
+   ],
+   "status": "next"
+  },
+  {
+   "week": 7,
+   "title": "多模態與機器人模型",
+   "topics": [
+    "VLM 的視覺編碼器",
+    "VLA 與世界模型",
+    "機器人評測怎麼讀"
+   ],
+   "status": "next"
+  },
+  {
+   "week": 8,
+   "title": "個人知識庫與檢索",
+   "topics": [
+    "embedding",
+    "RAG",
+    "agent 記憶"
+   ],
+   "status": "next"
   }
  ]
 }
