@@ -26,5 +26,6 @@
   - 2026-11-16 提示注入：讓 agent 分清楚「指令」和「資料」（銜接第 5 週「Agent 安全與權限」之「提示注入與越界行為」；當天 IBM LLMON 新聞；隨機邊界包裝範例已實際執行，Claude Code 權限設定未驗證）
   - 2026-11-17 不可逆操作的確認閘門：Claude Code 的 ask 規則與 PreToolUse hook（銜接第 5 週「Agent 安全與權限」之「不可逆操作的確認閘門」；當天 RSI Control Arena 監控漏抓與 Qwen4-Max Live Delivery；設定出自官方 hooks／permissions 文件，hook 腳本以假輸入實際執行，Claude Code 內跳出確認未驗證）
   - 2026-11-18 網路與金鑰隔離：允許清單代理與憑證替換（銜接第 5 週「Agent 安全與權限」之「網路與金鑰隔離」；當天 agent-framework PyPI 竊密事件與 Prime Radiant／Simon Willison 外部沙箱；.pth 盤點與憑證替換玩具範例已實際執行，external-sandbox-v86 與 CLAUDE_CODE_SHELL_PREFIX 串接未實際執行）
+  - 2026-11-19 權限與沙箱：讓 agent 跑的指令只碰得到該碰的檔案（銜接第 5 週「Agent 安全與權限」之「權限與沙箱」，第 5 週四個主題至此全數上過；當天 OpenAI《Inside the Codex sandbox》（原站擋爬蟲，只讀 RSS 摘要）與 Gemini 4 Neon 安全評測；設定出自 Claude Code 官方沙箱文件，sandbox_check.py 以範例設定實際執行，/sandbox 與 bubblewrap 未實際執行）
 - 下一步：第二輪四週（2026-11-15 依讀者興趣與近期新聞排定）：第 5 週「Agent 安全與權限」（權限與沙箱、網路與金鑰隔離、不可逆操作的確認閘門、提示注入與越界行為；11/12 決策閘門可當銜接）→ 第 6 週「把 AI 放進 App」（結構化輸出、端上 vs 雲端、資料最小化與隱私說明、用量上限；對應 Tap Diary）→ 第 7 週「多模態與機器人模型」（VLM 視覺編碼器、VLA 與世界模型、機器人評測）→ 第 8 週「個人知識庫與檢索」（embedding、RAG、agent 記憶；對應第二大腦筆記與個人助理）。
 - 未解問題：（使用者之後補充）
