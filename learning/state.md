@@ -29,5 +29,6 @@
   - 2026-11-19 權限與沙箱：讓 agent 跑的指令只碰得到該碰的檔案（銜接第 5 週「Agent 安全與權限」之「權限與沙箱」，第 5 週四個主題至此全數上過；當天 OpenAI《Inside the Codex sandbox》（原站擋爬蟲，只讀 RSS 摘要）與 Gemini 4 Neon 安全評測；設定出自 Claude Code 官方沙箱文件，sandbox_check.py 以範例設定實際執行，/sandbox 與 bubblewrap 未實際執行）
   - 2026-11-20 結構化輸出：讓模型回程式讀得懂的 JSON（預習第 6 週「把 AI 放進 App」之「結構化輸出」，第 5 週已於 11/19 上完；當天 OpenAI Performance Factory 把 agent 發現寫進任務紀錄；API 用法出自 Claude 官方 Structured outputs 文件，未實際呼叫 API；check_impact.py 以 jsonschema 4.26.0 實際執行，並驗證本期 6 則 impact 全部通過）
   - 2026-11-21 端上推論 vs 雲端：放得下嗎、跑多快、雲端要花多少（銜接第 6 週「把 AI 放進 App」之「端上推論 vs 雲端」；當天 Thinking Machines Inkling 2 Mini 約 20 GB、32 GB Mac 可跑；記憶體／頻寬／成本估算腳本已實際執行，llama serve 與 Ollama 指令未實際執行）
+  - 2026-11-22 資料最小化與隱私說明：盤點哪些資料會離開手機、對應 Google Play Data safety 表單（銜接第 6 週「把 AI 放進 App」之「資料最小化與隱私說明」；當天 Signal 封鎖作業系統 AI agent 讀取畫面；分類出自 Play Console Data safety 官方說明、FLAG_SECURE 出自 Android 官方文件；check_privacy.py 已實際執行，Flutter 專案加 FLAG_SECURE 與 Play Console 操作未實際執行）
 - 下一步：第二輪四週（2026-11-15 依讀者興趣與近期新聞排定）：第 5 週「Agent 安全與權限」（權限與沙箱、網路與金鑰隔離、不可逆操作的確認閘門、提示注入與越界行為；11/12 決策閘門可當銜接）→ 第 6 週「把 AI 放進 App」（結構化輸出、端上 vs 雲端、資料最小化與隱私說明、用量上限；對應 Tap Diary）→ 第 7 週「多模態與機器人模型」（VLM 視覺編碼器、VLA 與世界模型、機器人評測）→ 第 8 週「個人知識庫與檢索」（embedding、RAG、agent 記憶；對應第二大腦筆記與個人助理）。
 - 未解問題：（使用者之後補充）
