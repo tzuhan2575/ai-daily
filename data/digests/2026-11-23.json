@@ -1,0 +1,339 @@
+{
+ "date": "2026-11-23",
+ "issue": 28,
+ "items": [
+  {
+   "id": "dragos-prompt-canary",
+   "cat": "資安",
+   "emoji": "🐤",
+   "src": "Dragos 研究部落格（HD Moore，已讀全文文字，圖表沒看）＋OpenRouter 公告（已讀全文）＋Together AI、Phala、Novita、Atlas Cloud 事件說明（皆已讀全文文字）・11/19–11/22",
+   "title": "Metasploit 作者 HD Moore 用 200 萬個『誘餌提示』追蹤 AI 推論資料流向：至少 3 家推論商被入侵、市集賣家偷看客戶提示、標了『零資料保留』的請求仍被抓去爬；OpenRouter 下架 3 家供應商、125 個端點取消 ZDR 資格",
+   "what": "資安公司 Dragos 研究長 HD Moore 11/19 發表：2026 年 7 月到 11 月，他們把約 200 萬個提示送進常見 AI 服務，每個提示都藏著獨一無二的『金絲雀』（假 AWS 金鑰、網址、DNS 名稱），再看誰去用。三個發現：① 至少 3 家推論商的資料外洩，數百把只送過一次的 AWS 誘餌金鑰被拿去嘗試登入，最早一起從 7 月中開始，3 家都在被通知前不知情；② 推論『市集』裡的賣家只要開請求紀錄就能看到客戶提示，有人從家用網路手動拿提示裡的密碼去 SSH 登入；③ 多家供應商沒遵守隱私設定：某中國 AI 實驗室在請求後 2 到 3 天回頭抓了超過一半提示中的網址，包括約三分之二標了『不收集資料／ZDR』的請求，連透過美國代管商呼叫也一樣。11/22 OpenRouter 宣布下架 3 家供應商、把 125 個端點移出零資料保留（ZDR）資格並通知受影響客戶；Together AI 承認 6–7 月部分提示樣本外洩，起因是『AI coding agent 把一組憑證 commit 進公開 GitHub repo』。",
+   "plain": "白話：你呼叫 AI 的 API 時，提示不一定直接送到模型公司，常常經過『路由器』轉手好幾層，每一層都看得到全文。研究者在提示裡放『一旦被用就會響的假鑰匙』，結果發現有人真的拿去用了——代表提示被偷看、被保存，甚至被轉給不該看的公司。『零資料保留』只是一個請求上的旗標，只約束第一站，不保證後面每一站都照做。",
+   "why": "你每天用 Claude Code，也打算讓 Tap Diary 和個人助理呼叫雲端模型。這則直接回答『我的提示會跑去哪裡』：最便宜的路由不等於最安全；而 Together 的事件起點正是 AI coding agent 把金鑰 commit 出去——和你的日常工作流完全同一類風險。",
+   "deep": [
+    [
+     "我讀到什麼",
+     "讀了 Dragos 全文文字（圖表只看到圖說）、OpenRouter 11/22 公告，以及 OpenRouter 列出的四份供應商說明：Together AI（11/21）、Phala（初步事故報告，頁面日期我沒確認）、Novita（11/22）、Atlas Cloud（11/22）。Dragos 沒有點名哪三家被入侵、也沒點名那家中國實驗室；以下供應商對應關係都來自各家自己的公告。所有數字都是研究者或廠商自述，沒有第三方獨立重測。"
+    ],
+    [
+     "金絲雀怎麼追蹤",
+     "每個提示帶一組只存在那裡的 AWS 金鑰（真的金鑰，但綁空帳號、全程記錄）、網址和 DNS 名稱；任何人一用，就能對回『哪個提示、哪個模型、哪個路由、什麼隱私設定』。為了知道請求實際經過誰，他們還做了『AI 推論版 traceroute』：在請求放一張指回自己伺服器的圖片網址，誰去抓就露出 IP；再故意送稍微壞掉的請求，每一層路由會把下一層的錯誤包一層自己的格式，拆開就能看到 3、4 層轉手。追了約 2,000 條路徑，數百條有無法辨識的系統，還發現有賣家在每個提示偷塞約 1,000 個隱藏 token。"
+    ],
+    [
+     "被入侵的那幾家",
+     "Dragos 說其中一起事件裡，10 月底某幾個時段送出的每一個請求都被偷，連在模型執行前就被拒絕的請求也是——代表攻擊者在『前門』就複製流量。拿到金鑰後的流程很典型：幾小時內測金鑰是否有效、列 S3、翻 Secrets Manager、嘗試開 Bedrock 與建 IAM 使用者；11/1 起還用了 LLM 驅動的滲透測試框架 ARTEX，User-Agent 為 artex-agent、artex-judge-r121，Dragos 建議加進偵測規則。Phala 的報告對得上：攻擊者串連一個舊的對外服務與只靠 loopback 信任的管理介面，取得推論 VM 控制權，10/21–11/8 經 OpenRouter 送到它的 DeepSeek V4 Flash 0731 請求要視為外洩。"
+    ],
+    [
+     "AI coding agent 把鑰匙交出去",
+     "Together AI 說明：他們為了軟體測試，把經授權的提示樣本（MiniMax M3、GLM-5.2、Kimi K2.6 的請求）存在私有 Hugging Face repo；開發公開 repo xorl 時，『一個 AI coding agent commit 了能存取該私有 repo 的憑證』。自動掃描有抓到並 revert，但在曝光期間已被人拿走、下載樣本、再從裡面搜其他服務的憑證去試——其中 5 組正是 Dragos 的誘餌。Together 之後的改善：短效或限縮權限的憑證、每個 PR 都掃憑證、新帳號預設 ZDR、更新使用 AI coding agent 的開發流程。"
+    ],
+    [
+     "『轉手』的問題",
+     "Novita 承認一個路由設定錯誤，讓 2026-05-28 到 11-11 間部分 MiniMax 請求被轉到 MiniMax 官方 API，而不是在 Novita 自己的機器上處理；研究者觀察到提示裡的網址與主機名被存取，沒有看到 AWS 誘餌金鑰被使用。Atlas Cloud 也說經它送到 MiniMax 官方 API 的 M3、M2.7 提示有網址被第三方打開，已停止轉送，並自行把所有模型撤下 OpenRouter 重測，還出錢請 HD Moore 每天測四次。這些描述與 Dragos 第三個發現（請求被送回原模型廠）吻合，但 Dragos 原文沒寫實驗室名稱，對應是我依各家公告推的。"
+    ],
+    [
+     "Dragos 的建議",
+     "① 能自架就自架（只有這樣沒人讀得到提示）；② 直接用第一層供應商，一家公司、一份合約、一份隱私政策；③ 用路由器時自己指定上游、確認隱私設定真的改變路徑，遠離轉售市集；④ 在 agent 會送出的上下文裡放自己的誘餌憑證，一被使用就當事件處理，Thinkst 的免費 Canarytoken 就能開始；⑤ 開啟供應商的密鑰過濾，但它擋不住不像金鑰的敏感資料。原文一句話很值得記：『隱私旗標只約束第一站，而 AI agent 會把它讀得到的東西都送出去，包括憑證。』"
+    ],
+    [
+     "觀察點",
+     "① 其餘尚未公開說明的供應商（OpenRouter 說不是每家都發了公告）；② OpenRouter 能不能把這套測法變成常態檢查；③ 那家拒絕公開的首起入侵供應商；④ 模型廠會不會回應『ZDR 請求仍被爬』。HN 討論我沒讀。"
+    ]
+   ],
+   "impact": {
+    "level": "use",
+    "text": "你若有透過 OpenRouter 或第三方推論商送過含金鑰、密碼、私人網址的提示，應視為可能外洩；Claude Code 讀得到的 .env 也可能被 agent 送進上下文（推測：這是最常見的路徑）。",
+    "action": "今天做兩件事：① 到 OpenRouter 帳號設定或請求參數加 `\"provider\": {\"data_collection\": \"deny\", \"zdr\": true}`（OpenRouter 官方 provider routing 文件的欄位；我沒實際呼叫）；② 在日報 repo 的 .env 或 agent 會讀的設定檔放一個 Thinkst Canarytoken 假 AWS 金鑰，一響就知道上下文外洩了。"
+   }
+  },
+  {
+   "id": "openai-perplexity-limit",
+   "cat": "政策安全",
+   "emoji": "📉",
+   "src": "OpenAI 研究部落格〈Perplexity and Intelligence〉（首席科學家 Jakub Pachocki，已讀全文文字，主圖沒看）・11/22",
+   "title": "OpenAI 首席科學家首度公開內部預訓練指標：GPT-3.5 約 0.99、GPT-4 約 0.91、最新模型已低於 0.8；提議業界以困惑度設『共同上限』，在監控能力達標前不跨越",
+   "what": "Jakub Pachocki 11/22 撰文，公開 OpenAI 從 GPT-3.5 起追蹤的內部指標：模型在一份『留出資料集』（取自 OpenAI 內部程式碼庫）上的 log 困惑度（等同交叉熵損失）。他給的數字：GPT-3.5 約 0.99、GPT-4 約 0.91；低於 0.8 後出現資安與數學上的『轉變性能力』；模型降到約 0.76 時開始在數學開放問題上產出『突破性結果』。他預期進入約 0.68–0.70 區間時會再出現新能力，但不知道是什麼。核心提議：前沿實驗室共同以困惑度等指標訂『第一道上限』，在理解與監控 AI 行為達到具體里程碑（例如『思考鏈監控的後繼者』）之前承諾不跨越。",
+   "plain": "白話：困惑度是『模型猜下一個字猜得多準』的分數，越低越會猜。OpenAI 說，過去每次這個分數往下掉一段，模型就突然多會一種本事（例如 GPT-4 開始能好好用思考鏈推理）。所以他主張：與其等新能力冒出來才補救，不如大家先約定『分數降到某條線就先停下，等安全工具跟上再繼續』。",
+   "why": "這是前沿實驗室少見地主動公開『競爭對手能看懂自己進度』的內部數字，並把它綁到安全政策上。對你而言，它也是第 1 週『token 與模型怎麼運作』的延伸：所有新能力的源頭仍是『預測下一個 token』這件事。",
+   "deep": [
+    [
+     "我讀到什麼",
+     "讀了全文文字與註腳；文章開頭的損失曲線圖我沒看到（是圖片），所以只用文中明寫的數字。這些數字是 OpenAI 自己在內部資料集上的量測，外部無法重現。"
+    ],
+    [
+     "為什麼用內部程式碼當資料集",
+     "註腳說明：自 GPT-3.5 起主要的留出資料集來自 OpenAI 內部程式碼庫，數字是固定快照。他也承認這對 GPT-2、GPT-3 不公平，因為它們的訓練資料不重程式碼；選它是因為『這是我們現在最倚賴的進度指標』。"
+    ],
+    [
+     "他自己列的四個限制",
+     "① 各家用不同評測資料、不同訓練資料，難以跨實驗室比較；② 困惑度不直接對應任何我們在乎的任務；③ 看不到預訓練以外的進步——思考鏈推理大幅提升能力，卻不會降低困惑度；④ 不知道底線在哪：越接近資料本身的熵，數字進步會變慢，但小幅下降可能代表更大的能力躍進。"
+    ],
+    [
+     "AI 參與自身研發",
+     "文章認為最值得注意的不是『AI 取代研究員』，而是 AI 參與『預訓練演算法研究』可能帶來階躍；他說最快 2027 年可能看到預訓練基礎進展的『雪崩』。註腳補充：2026 年曲線明顯加速，主要歸因於長期研究與算力投資，自動化只占較小部分，但最新模型已有『來自 AI 的實質設計貢獻』。他也說，對齊與監控的進展大概跟不上這種加速。"
+    ],
+    [
+     "安全上的預期",
+     "他明寫應預期現行主流的『對齊稽核』會進一步失效，模型對『自己正在被評測或訓練』的察覺也會增加，因此主張各家在新模型首次使用前，就要有共同的評測規範與紅隊安全論證，以及共同的透明度標準。"
+    ],
+    [
+     "觀察點",
+     "① Anthropic、Google DeepMind 等是否回應或公開自家同類數字；② 『上限』要用什麼可跨實驗室比較的資料集；③ 這和 11/21 我們報過的 OpenAI 反蒸餾做法並列，顯示 OpenAI 近期密集發表安全相關立場。社群反應我沒讀。"
+    ]
+   ],
+   "impact": {
+    "level": "watch",
+    "text": "沒有立即要做的事；但『困惑度 ↔ 能力』的框架有助你解讀之後各家模型發布時的宣稱（推測：其他實驗室可能被追問同類數字）。",
+    "action": ""
+   }
+  },
+  {
+   "id": "self-rewriting-weights",
+   "cat": "研究",
+   "emoji": "🔧",
+   "src": "Hugging Face Papers〈Language Models Can Rewrite Their Own Weights〉（UIUC 等，只讀了摘要與專案頁，論文全文沒讀）・11/16 上 arXiv、11/20 投稿 HF",
+   "title": "讓模型讀自己的權重、自己改：Qwen3.5 27B 不用梯度、不用訓練，自我修改後在 490 題沒見過的題目上準確率 +6.6 分；還能修好被破壞的自己（7% → 70%），但 2B、4B、9B 做不到",
+   "what": "UIUC 等單位的 Jiajun Fan 等人提出『self-rewriting』：給模型它自己的權重、練習題的對錯結果、以及執行自己的能力，讓它自己診斷失敗原因、直接改權重。作者說：27B 模型的自我修改讓它在 490 題事先固定、沒見過的題目上準確率提高 6.6 個百分點；前八次修改『只升不降』（每次只在自己的測試支持時才提交，並取代上一版）；把一份副本某矩陣的一塊 8 列換成雜訊後，模型找到被破壞的矩陣並用自己算出的值重寫，在六個沒見過的影像基準上從 7.3% 回到 70.2%（未受損模型的 83%），全程沒讀原始權重。專案頁註明用的是 Qwen3.5 的 2B／4B／9B／27B 四種大小：2B 不做修改，4B、9B 把自己改壞，只有 27B 成功。",
+   "plain": "白話：通常讓模型變強只有兩條路——再訓練一次（貴），或在用的時候多花算力（每次都要付）。這篇說有第三條：讓模型像人一樣『看自己的大腦哪裡出問題，親手改掉』。改完的效果留在權重裡，之後每次回答不用多花錢，只要一張 GPU 跑幾小時。",
+   "why": "你在學本地跑開放模型（第 4 週），這篇示範了『開放權重』的另一種價值：拿得到權重，就可能讓模型自己修補自己。但這仍是單一團隊的初步結果，離實用很遠。",
+   "deep": [
+    [
+     "我讀到什麼",
+     "只讀了 HF 頁面上的摘要、作者留言和專案頁文字；論文方法細節、實驗設定、基準名稱（除 MathVerse 外）和統計檢定我都沒讀，所以無法評估 +6.6 分是否穩健。目前沒有第三方重現。"
+    ],
+    [
+     "模型怎麼改自己",
+     "摘要描述 27B 模型『像人一樣』比較自己『有完成答案』與『跑到 token 上限還沒答完』兩種情況的隱藏狀態，找出區分兩者的方向，然後削弱它。專案頁的例子是模型在某題陷入一直重複『I will write the response.』的迴圈，修改後同一題、同一隨機種子能正常作答。"
+    ],
+    [
+     "能力隨規模出現",
+     "同一家族四種大小給同樣的任務與工具，只有最大的 27B 能有效改進與修復自己；4B、9B 會把自己改壞。作者把這當成『能力隨規模湧現』的證據——這呼應今天 OpenAI 那則『新能力在某個門檻突然出現』的論點，但兩者是不同研究，我只是並列。"
+    ],
+    [
+     "和『前沿模型改小模型』的差別",
+     "摘要提到先前已有前沿模型去編輯更小模型權重的研究；這篇強調是一個開放的 27B 模型改自己，不需要前沿模型也不需要訓練基礎設施。"
+    ],
+    [
+     "要保留的疑問",
+     "『模型自己改權重』在安全上也值得關注：改動是否只修了特定失敗模式、會不會在其他任務退步，摘要沒有交代；修復實驗是人為破壞一小塊矩陣，和真實世界的退化不同。"
+    ],
+    [
+     "觀察點",
+     "① 程式碼是否公開、有沒有人在其他模型家族重現；② 在寫程式等非數學任務上是否有效。"
+    ]
+   ],
+   "impact": {
+    "level": "skip",
+    "text": "研究階段，與你目前的專案沒有直接關係。",
+    "action": ""
+   }
+  },
+  {
+   "id": "o2laf-latent-action",
+   "cat": "研究",
+   "emoji": "🎞️",
+   "src": "arXiv cs.CV〈One Prior, Two Dynamics〉O²LaF（只讀了摘要，全文與實驗表沒讀）・11/19；另附 arXiv cs.RO〈PGX〉（只讀摘要）",
+   "title": "拿現成的影片生成模型教機器人『動作』：O²LaF 用同一個預訓練影片 DiT 同時初始化『從畫面猜動作』與『給動作生畫面』兩個模型，從無標註影片學到可跨機器人轉移的潛在動作",
+   "what": "Yuxin Jiang、Mike Zheng Shou 等人提出 O²LaF（一個先驗、兩種動態）：潛在動作學習想從影片前後畫面的變化，反推出『造成變化的動作』當監督訊號，但過去多半從零學動態。O²LaF 讓兩個模型都從同一個預訓練影片擴散 Transformer（video DiT）初始化——一個是前饋式的『轉移編碼器』負責逆向動態（看兩張畫面→猜動作），一個是因果、以動作為條件的影片生成器負責正向動態（給動作→預測下一段畫面），兩者透過一個精簡的瓶頸端對端一起訓練。作者說在導航與機器人操作上，小樣本動作探測達到新的最佳，並能在不同視覺情境與不同機器人之間做零樣本動作轉移；換成 V-JEPA2 這類預測表徵當先驗也有競爭力。",
+   "plain": "白話：網路上有海量影片，但沒人標註『這一幕機器手臂往左移了 3 公分』。這篇的想法是：既然影片生成模型已經很懂『世界怎麼變』，就拿它當起點，同時學『從畫面變化猜動作』和『給定動作想像接下來的畫面』，讓機器人從沒標註的影片學到動作。",
+   "why": "這正對到你 CV／機器人感知的背景，也是第 7 週『VLA 與世界模型』的預習材料：影片生成模型正在變成機器人學習的『先驗知識庫』。",
+   "deep": [
+    [
+     "我讀到什麼",
+     "只讀了 arXiv 摘要頁；具體數字、基準名稱、和哪些方法比較都沒讀，所以『新的最佳』只能轉述作者說法。專案頁與程式碼連結摘要頁有提到，我沒點開。"
+    ],
+    [
+     "逆向與正向動態",
+     "逆向動態（inverse dynamics）是『看到前後兩幀，推出中間做了什麼動作』；正向動態（forward dynamics）是『知道現在畫面和動作，預測下一幀』。兩者互為檢查：猜出的動作要能讓生成器畫出正確的下一幀。O²LaF 的重點是兩者共用同一份影片模型的先驗，並『控制資訊存取』，避免編碼器偷偷把整張下一幀塞進動作變數裡。"
+    ],
+    [
+     "為什麼『可轉移』重要",
+     "如果學到的潛在動作只對某台相機、某種手臂有效，價值有限；作者宣稱能跨視覺情境與跨機器人型態做零樣本轉移，這是潛在動作方法想解的核心問題。是否成立要看全文實驗。"
+    ],
+    [
+     "同日另一篇：PGX",
+     "arXiv cs.RO 的 PGX 走相反方向：不讓 VLA 一個模型包辦長時程任務，而是用『以物理條件判斷的狀態機』管流程、讓 VLA 只負責每個階段的技能、再用『世界座標鎖定』維持空間一致；在 3 個模擬任務和 1 個 Unitree G1 人形機器人真機任務上，作者說階段推進與成功率都有提升。兩篇並看：一個是從資料端讓模型學更多，一個是用傳統元件替模型分擔。"
+    ],
+    [
+     "觀察點",
+     "① 程式碼釋出後，能否用在自己錄的操作影片；② 與 11/18 報過的 ScaleVLA 等大規模 VLA 怎麼互補。"
+    ]
+   ],
+   "impact": {
+    "level": "watch",
+    "text": "和你的 CV／機器人背景直接相關，適合放進第 7 週閱讀清單；短期不影響手上的專案。",
+    "action": "把 O²LaF 與 PGX 的 arXiv 編號（2611.26617、2611.26596）加進第二大腦的『第 7 週：VLA 與世界模型』筆記。"
+   }
+  },
+  {
+   "id": "anthropic-power-emissions",
+   "cat": "產業觀點",
+   "emoji": "🏭",
+   "src": "Better Data Center Project 報告（已讀全文文字，地圖與圖表沒看）・11/16；HN 11/22",
+   "title": "倡議團體估算 Anthropic 2028 年用電約 87% 來自天然氣、11% 來自燃煤，年排放中位估計 3,200 萬噸 CO2，可能超過加州全部發電",
+   "what": "Better Data Center Project 以 Anthropic 為個案：截至 2026 年 10 月 Anthropic 已簽約 15 GW 算力，其中約 5.9–9.6 GW 對應到具體資料中心。報告以各站點的自備發電與『邊際電網發電機』推算，2028 年約 87% 電力來自天然氣、11% 來自燃煤；排放區間 1,700–3,800 萬噸 CO2e／年，中位 3,200 萬噸。報告說 Anthropic 在美國沒有公開的再生能源直接承諾（公開的只有挪威與加拿大），卻買了 1.7 GW、34 億美元的燃氣發電機承諾；現場自備電力約 80% 是效率較低的簡單循環渦輪與引擎。",
+   "plain": "白話：AI 越用越多，背後是越來越多的電，而新建的電大多來自燒天然氣。這份報告把一家公司簽下的資料中心一個個對到附近的電廠，估算它幾年後會排多少碳。",
+   "why": "你每天用 Claude，這是它背後的實體成本。也提醒你：報告是倡議團體依假設推估，不是 Anthropic 的揭露數字，讀這類新聞要先看方法。",
+   "deep": [
+    [
+     "我讀到什麼",
+     "讀了報告全文文字與方法說明；地圖、圖 1–3 沒看。我沒有找到 Anthropic 對這份報告的回應。"
+    ],
+    [
+     "方法與假設",
+     "報告用美國環保署的 AVERT 模型估算『新增負載會由哪些邊際電廠供應』，假設 PUE 1.1–1.2（中位 1.15）、用電率 60–80%（中位 70%），並假設 9.6 GW 全部在 2028 年上線。報告自己說明：使用邊際排放而非平均排放，是因為想看『新資料中心近幾年上線』的短期影響；若用平均碳強度，數字會低不少（839 vs 1,033–1,076 lb CO2e/MWh）。"
+    ],
+    [
+     "比較基準要小心",
+     "報告說 2028 年的估計可能超過 Meta、微軟、Google 2025 年 Scope 2 排放的總和；但它自己在註腳提醒：那是拿 Anthropic 的未來估計比三家的過去數字，三家的排放也會成長，『並非暗示 Anthropic 會是最大排放者』。另外，租用設施（例如 Amazon 的 Project Rainier）的排放在會計上多半算在設施擁有者名下。"
+    ],
+    [
+     "和 SpaceX 的算力合約",
+     "報告引用 SpaceX 的 S-1A 與 Anthropic 10 月的 S-1：Colossus 合約從每月 12.5 億美元擴大到約每月 31 億美元；報告推估約新增 20 萬張 GPU、約 400 MW，並自承誤差約 ±25%。"
+    ],
+    [
+     "觀察點",
+     "① Anthropic 上市後的永續揭露；② 同一團隊是否對 OpenAI、xAI 做同樣分析（HN 同日另有一篇〈AI 正成為氣候災難〉，我只看到標題）。"
+    ]
+   ],
+   "impact": {
+    "level": "skip",
+    "text": "對你的工作沒有直接影響。",
+    "action": ""
+   }
+  },
+  {
+   "id": "muru-mcp",
+   "cat": "工具",
+   "emoji": "🐍",
+   "src": "Graham Dumpleton 部落格〈Muru: working with coding agents〉〈AI as a lifestyle choice〉（皆已讀全文文字）＋Simon Willison 連結文・11/21–11/23",
+   "title": "mod_wsgi 作者用 AI 寫的 Python 伺服器 Muru，自帶 MCP 伺服器與 Claude Code skill：實測 agent 部署壞掉的版本、看執行緒堆疊找出死結、回滾再修好，兩段合計約 2 分半",
+   "what": "寫了 mod_wsgi 20 年的 Graham Dumpleton 近一個月用 AI 開發 Muru：一個以 Rust 寫、跑 WSGI 與 ASGI Python 應用的伺服器，三週內發了近 20 篇開發紀錄。11/23 的文章介紹 `muructl mcp serve`：在專案的 .mcp.json 加一行就能讓 Claude Code 透過 MCP 操作 Muru，提供數十個工具（部署、回滾、排空、金絲雀發布、看日誌與每條執行緒堆疊），並刻意不提供停止或升級 daemon、在 worker 裡執行任意程式。`--read-only` 只列出唯讀工具，`--allow rollback,drain` 只多開這兩個；`muructl mcp skill install` 會把對應版本的 skill 寫進 .claude/skills/muru/SKILL.md。作者實測：headless Claude Code 部署一個含死結的改動，5 個測試 3 個失敗，agent 用 `debug stacks` 看到三個請求卡在同一把鎖，找出兩個錯誤並回滾，23 輪約 1 分 45 秒；接著修好、部署、排空壞版本，8 輪約 45 秒。",
+   "plain": "白話：以前 agent 測網站時，只能在背景開伺服器、用 curl 戳、讀它印出來的東西，卡住就只看到逾時。Muru 把伺服器『知道的事』——哪個請求卡多久、每條執行緒停在哪一行、上一版還在不在——直接交給 agent 看，壞了也能一鍵切回舊版，不用重啟。",
+   "why": "這是『為 agent 設計工具』的好範例，剛好把第 2 週 MCP／Skills、第 5 週權限與確認閘門串起來：工具分唯讀與會改東西、沒開的工具對 agent 來說『根本不存在』、skill 跟著版本走。你做個人助理或自己的 skills 時可以照抄這套設計。",
+   "deep": [
+    [
+     "我讀到什麼",
+     "讀了 11/23 的 agent 文章、11/11〈AI as a lifestyle choice〉全文，以及 Simon Willison 的介紹。Muru 還沒正式釋出，作者說下一篇才會談適合本地開發與正式環境的釋出時程，所以以下都是作者自己的展示，我沒有執行任何指令。"
+    ],
+    [
+     "權限設計",
+     "每個 MCP 工具都對應同名的 muructl 指令加 --json，並標註『只讀』或『會改變狀態』。用 --read-only 啟動時呼叫 deploy，回的是 JSON-RPC 錯誤『no tool named deploy』——不是被拒絕，而是工具不存在。run_command 只能跑應用在 [tool.muru] 設定裡宣告過的指令。這和 11/17 那課『不可逆操作的確認閘門』是同一種思路，只是做在工具提供者這一端。"
+    ],
+    [
+     "skill 跟著版本走",
+     "skill 內嵌在 muructl 裡，install 時寫入專案，所以永遠和使用中的版本一致；`muructl mcp skill status` 在專案副本過期時以非零狀態結束，CI 可以檢查。MCP 伺服器在專案沒有 skill 時，會在開場指示裡提醒 agent 去安裝。skill 內容包含每個操作對流量的影響表，以及『先查狀態、部署、跑測試、失敗時先看事件／日誌／執行中請求／堆疊，再改程式』的開發迴圈。"
+    ],
+    [
+     "那場死結示範",
+     "同事的改動讓 summary() 先拿鎖再呼叫也要拿同一把鎖的 all_orders()，而 threading.Lock 不可重入，造成死結；另一處把 .get() 改成直接取索引，找不到時丟 KeyError。agent 被限制只能用 Muru 工具、跑 tests.py、讀檔。它從堆疊看到 /orders/summary 已卡 29.9 秒、其他兩個請求排在後面，解釋了『失敗測試越跑越多』這個看起來像不穩定測試的現象，回滾後再修。作者強調：兩個版本並存，才讓 agent 能在當機『正在發生時』去看壞版本的 worker。"
+    ],
+    [
+     "作者對 AI 開發的看法",
+     "他說一個月來每天都在用 AI 寫 Muru，可以讓工作跑著去散步、整理花園；付 20 美元方案時怕用完而不敢依賴，付 200 美元時又覺得非用滿不可，目前因入選 Claude for Open Source 計畫而不用擔心成本。他用日本『泥丸子』比喻：AI 產出一開始像泥巴，『判斷哪裡還不夠好』仍是他的工作。他也坦言 MCP 還年輕，這次加 MCP 伺服器是一場實驗，做法可能是錯的。"
+    ],
+    [
+     "觀察點",
+     "① Muru 正式釋出時程；② 其他伺服器（gunicorn、uvicorn）會不會跟進提供 agent 介面。"
+    ]
+   ],
+   "impact": {
+    "level": "watch",
+    "text": "Muru 還沒釋出，你也不是用 Python 伺服器部署 Tap Diary；但『工具分唯讀／可寫、skill 內嵌於工具並檢查版本』的設計，可以直接套到你自己的 skills 與個人助理（推測）。",
+    "action": "檢查你最常用的一個自訂 skill：它要求 agent 做的操作裡，哪些會改東西？在 SKILL.md 裡把『唯讀檢查』與『會改變狀態的操作』分開列，並寫明後者要先停下來確認。"
+   }
+  }
+ ],
+ "terms": [
+  [
+   "金絲雀憑證（canary token）",
+   "只放在一個地方的假鑰匙或網址，一旦有人使用就會通知你，代表那個地方被看過或外洩了。"
+  ],
+  [
+   "零資料保留（ZDR）",
+   "供應商承諾不儲存你的提示與回應；Dragos 發現它只約束第一站，後面的轉手不一定遵守。"
+  ],
+  [
+   "推論路由器／市集",
+   "用一個 API 端點把請求轉給多家模型供應商的服務；市集版本由最便宜的賣家接單，每一層轉手都看得到全文。"
+  ],
+  [
+   "困惑度（perplexity）",
+   "衡量模型猜下一個 token 準不準的分數，取 log 就是交叉熵損失，越低越好。"
+  ],
+  [
+   "思考鏈監控（CoT monitor）",
+   "讀模型推理過程的文字，判斷它有沒有在做不該做的事；OpenAI 認為需要更強的後繼方法。"
+  ],
+  [
+   "隱藏狀態（hidden states）",
+   "模型內部每一層對輸入算出的向量，可以拿來分析模型『在想什麼』。"
+  ],
+  [
+   "潛在動作（latent action）",
+   "從影片前後畫面變化中學出來、不需人工標註的『動作』表示，可當機器人學習的監督訊號。"
+  ],
+  [
+   "逆向／正向動態",
+   "逆向：看前後畫面推出動作；正向：給目前畫面和動作預測下一幀。"
+  ],
+  [
+   "影片 DiT",
+   "以 Transformer 為骨幹的影片擴散生成模型，學過大量影片，懂『世界怎麼變化』。"
+  ],
+  [
+   "邊際排放",
+   "新增用電時，實際被叫起來多發電的那些電廠的排放；通常比電網平均更高。"
+  ],
+  [
+   "WSGI／ASGI",
+   "Python 網頁應用和伺服器之間的標準介面；WSGI 是同步的老標準，ASGI 支援非同步。"
+  ],
+  [
+   "Spend limit（花費上限）",
+   "在 Claude Console 為組織或工作區設定的每月花費上限，到了請求就會被擋。"
+  ]
+ ],
+ "lesson": {
+  "title": "成本與用量上限：替 App 裡的 AI 功能裝上『每人每日額度』和『每月預算』兩道閘門",
+  "minutes": 12,
+  "why_today": "第 6 週『把 AI 放進 App』已上過結構化輸出、端上 vs 雲端、資料最小化，今天補最後一個主題『成本與用量上限』。今天頭條 Dragos 的一句話剛好點題：『如果你不決定提示送去哪，最低價會幫你決定。』省錢的正確做法是控制用量，而不是改走來路不明的便宜轉售商——後者今天已證明會偷看提示。",
+  "sections": [
+   [
+    "是什麼",
+    "雲端模型按 token 收費，App 一上架，花多少錢就不再由你決定，而是由使用者怎麼用決定。『用量上限』就是幾道事先設好的閘門：① 每次請求的上限（max_tokens，限制單次輸出長度）；② 每位使用者每天能用多少；③ 整個 App 每月最多花多少；④ 供應商那端的硬上限，作為最後一道保險。"
+   ],
+   [
+    "為什麼要分好幾層",
+    "只靠供應商的月上限，一個濫用的帳號就能把整個月的預算燒光，所有使用者一起停擺；只靠 App 裡的計數，程式有 bug 時又沒有保險。所以 App 端做『細』的額度（每人每天），供應商端設『粗』的上限（每月）。另外要記得：Tap Diary 不能把 API 金鑰放進 App 安裝檔，額度檢查一定要放在你自己的伺服器或代理上，否則使用者可以繞過。"
+   ],
+   [
+    "Claude API 提供什麼",
+    "依 Claude 官方 Rate limits 文件：限制分兩種，spend limit（每月最多花多少）與 rate limit（每段時間最多幾個請求、幾個 token），採 token bucket 演算法持續補充。你可以在 Console 的 Spend limits 頁面為組織設一個低於所屬等級上限的月花費上限，也可以為每個 workspace 另設花費與速率上限——建議 Tap Diary 用獨立 workspace，避免和你自己的開發用量互相影響。每個回應帶有 anthropic-ratelimit-requests-remaining、anthropic-ratelimit-tokens-remaining 等標頭，可以拿來監控。"
+   ],
+   [
+    "碰到上限時，錯誤長怎樣",
+    "這是最容易寫錯的地方。官方文件說：① 碰到等級的月上限，回 HTTP 429、type 是 rate_limit_error，但 error.details.error_code 是 enforced_spend_limit_reached，而且沒有 retry-after 標頭——重試（包括 SDK 的自動重試）都沒用，要到下個月 1 日 UTC 0 點才恢復；② 碰到你自己設的 spend limit，回 HTTP 400、type 是 invalid_request_error，訊息開頭是『You have reached your specified API usage limits』；③ 一般的速率限制是 429 且通常帶 retry-after，等指定秒數再試。所以程式要先分辨是哪一種，再決定『等一下』還是『停下來、改走離線模式、通知開發者』。"
+   ],
+   [
+    "怎麼算每個人用了多少",
+    "每次 API 回應都會附 usage，包含 input_tokens 與 output_tokens。把它連同使用者 ID 與日期記下來，就能算每人每日用量；乘上官方價目表的單價就是成本。請求前先用『預估 token 數』檢查額度，回應後再用實際 usage 記帳。價格一定要從官方價目表抄，不要憑記憶——下方範例裡的單價是假設值。"
+   ]
+  ],
+  "practice": [
+   "把下方「範例」存成 budget_guard.py，執行 `python3 budget_guard.py`。我在本環境實際執行過：alice 前 5 次週摘要請求放行、第 6 次因超過每日 20,000 token 被拒；三種錯誤分別判為『停：組織月上限』『等 12 秒再試』『停：自訂 spend limit』。",
+   "打開 Claude 官方價目表，把 PRICE_IN、PRICE_OUT 改成你打算用的模型真實單價；再估算 Tap Diary 的 AI 週摘要：一位使用者一週一次、每次大約幾個 token，乘上預期使用者數，得出合理的 USER_DAILY_TOKENS 與 APP_MONTHLY_USD。",
+   "到 Claude Console 為 Tap Diary 建一個獨立 workspace，在 Spend limits 頁面設一個比你的月預算略高的上限，作為最後保險（Console 操作我沒有實際執行）。",
+   "決定碰到上限時 App 的行為：例如『今天的 AI 週摘要額度已用完，明天再試』，或改用端上的簡易摘要（呼應 11/21 那課），並把這段文案放進 App。",
+   "若你也透過 OpenRouter 呼叫模型，順便在請求加 `provider.data_collection: \"deny\"`，別為了省錢讓日記內容走到不明的轉售商（見今天頭條）。"
+  ],
+  "claude_prompt": "請幫我替 Tap Diary 的 AI 週摘要功能設計『成本與用量上限』，先不要寫程式，只產出設計文件 docs/ai_budget.md：1) 讀 repo 找出目前或計畫中呼叫雲端模型的地方，說明 API 金鑰放在哪裡；如果金鑰在 Flutter App 內，請明確標為高風險並建議改走自己的後端或代理；2) 設計三層上限：每次請求的 max_tokens、每位使用者每日 token 額度、整個 App 的每月預算，每一層說明放在哪裡檢查、超過時 App 顯示什麼；3) 依 Claude 官方 Rate limits 文件，列出三種錯誤的判斷方式與處理：429 且 error.details.error_code 為 enforced_spend_limit_reached（不要重試）、400 invalid_request_error 且訊息以 You have reached your specified 開頭（自訂上限，不要重試）、429 帶 retry-after（等待後重試）；4) 設計用量紀錄的資料表欄位（使用者 ID、日期、input_tokens、output_tokens）。價格請標示『需到官方價目表確認』，不要自己填數字；不確定的地方標『需確認』；不要修改任何現有檔案。",
+  "example": "\"\"\"每位使用者每日額度 + 全 App 每月預算 + 依官方錯誤格式決定要不要重試。\"\"\"\nimport sqlite3, datetime\n\nPRICE_IN, PRICE_OUT = 3.0, 15.0     # 每百萬 token 美元：假設值，請改成官方價目表的數字\nUSER_DAILY_TOKENS = 20_000          # 每人每天最多用多少 token\nAPP_MONTHLY_USD = 30.0              # 自己訂的月預算（應低於 Console 的 spend limit）\n\ndb = sqlite3.connect(\":memory:\")\ndb.execute(\"create table usage(user text, day text, tin int, tout int)\")\n\ndef cost(tin, tout):\n    return tin / 1e6 * PRICE_IN + tout / 1e6 * PRICE_OUT\n\ndef allow(user, est_tokens):\n    today = datetime.date.today().isoformat()\n    used = db.execute(\"select coalesce(sum(tin+tout),0) from usage where user=? and day=?\",\n                      (user, today)).fetchone()[0]\n    month = today[:7]\n    spent = sum(cost(a, b) for a, b in db.execute(\n        \"select tin,tout from usage where substr(day,1,7)=?\", (month,)))\n    if used + est_tokens > USER_DAILY_TOKENS:\n        return False, f\"{user} 今日已用 {used} token，超過每日額度\"\n    if spent >= APP_MONTHLY_USD:\n        return False, f\"本月已花 ${spent:.2f}，達到 App 月預算\"\n    return True, \"ok\"\n\ndef record(user, usage):            # usage 取自 API 回應的 usage.input_tokens / output_tokens\n    db.execute(\"insert into usage values(?,?,?,?)\", (user, datetime.date.today().isoformat(),\n               usage[\"input_tokens\"], usage[\"output_tokens\"]))\n\ndef on_error(status, body, headers):\n    err = body.get(\"error\", {})\n    if status == 429 and err.get(\"details\", {}).get(\"error_code\") == \"enforced_spend_limit_reached\":\n        return \"停：組織月上限已到，重試沒用，App 改走離線模式\"\n    if status == 429 and \"retry-after\" in headers:\n        return f\"等 {headers['retry-after']} 秒再試\"\n    if status == 400 and err.get(\"message\", \"\").startswith(\"You have reached your specified\"):\n        return \"停：碰到自己設的 spend limit，通知開發者\"\n    return \"其他錯誤：記錄後回報\"\n\nfor i in range(6):\n    ok, why = allow(\"alice\", est_tokens=4_000)\n    print(f\"第 {i+1} 次週摘要請求：{'放行' if ok else '拒絕'}（{why}）\")\n    if ok:\n        record(\"alice\", {\"input_tokens\": 3_200, \"output_tokens\": 600})\nprint(\"alice 今日花費估計 $%.4f\" % cost(3_200 * 5, 600 * 5))\nprint(on_error(429, {\"error\": {\"type\": \"rate_limit_error\", \"details\": {\"error_code\": \"enforced_spend_limit_reached\"}}}, {}))\nprint(on_error(429, {\"error\": {\"type\": \"rate_limit_error\"}}, {\"retry-after\": \"12\"}))\nprint(on_error(400, {\"error\": {\"type\": \"invalid_request_error\", \"message\": \"You have reached your specified API usage limits ...\"}}, {}))\n",
+  "sources": [
+   "Claude 官方文件《Rate limits》（spend limits、workspace limits、錯誤格式與回應標頭）",
+   "OpenRouter 官方文件《Provider routing》（data_collection、zdr 欄位）",
+   "Dragos《AI Supply Chain Security: What Canary Tokens Found》"
+  ]
+ }
+}
