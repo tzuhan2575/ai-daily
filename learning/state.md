@@ -34,5 +34,6 @@
   - 2026-11-24 VLM 的視覺編碼器：一張圖怎麼變成 token，從 mmproj 檔看起（提早進入第 7 週「多模態與機器人模型」之「VLM 的視覺編碼器」，第 6 週已於 11/23 上完；當天 NariQ 模型卡『視覺塔維持 BF16、另附 mmproj』與 Ai2 RoboTrack 點追蹤；mmproj 說明出自 llama.cpp 官方 multimodal 文件；SmolVLM-256M mmproj 已實際下載，gguf 0.19.0 的 gguf-dump 與 vit_tokens.py 已實際執行，llama-mtmd-cli／llama-server 未實際執行）
   - 2026-11-25 VLA 之前先搞懂機器人策略的輸入輸出：分層控制、動作空間與 50 Hz 的時間預算（銜接第 7 週「多模態與機器人模型」之「VLA 與世界模型」的前置；當天 NVIDIA Microduck ToF 避障 sim2real 教學；分層控制、ToF 隨機化與 50 Hz 導航策略出自該教學全文，玩具 ONNX 策略腳本已用 onnxruntime 1.32.0 實際執行並量測單步推論時間，Isaac Lab 訓練與真機部署未實際執行）
   - 2026-11-27 機器人評測怎麼讀：部分得分、10 次試驗的誤差範圍，以及『練習之後』才考試（銜接第 7 週「多模態與機器人模型」之「機器人評測怎麼讀」；當天 Artificial Analysis AA-Robotics-Sim v0.1；計分方式、練習／評測設計與成功次數出自官方文章；robo_eval_ci.py（Wilson 區間，標準函式庫）已實際執行；11/26 未出刊）
-- 下一步：第 7 週「多模態與機器人模型」已上過「VLM 的視覺編碼器」（11/24）、「策略的輸入輸出／分層控制」（11/25，VLA 前置）與「機器人評測怎麼讀」（11/27），接著是 VLA 與世界模型本體（閱讀清單已累積 EgoX、ScaleVLA、Z-sight、AgentRoboCritic、SAFI、O²LaF、PGX、RoboTrack、Microduck、RoboQuest、AA-Robotics-Sim、AgenTAP 等）→ 第 8 週「個人知識庫與檢索」（embedding、RAG、agent 記憶；對應第二大腦筆記與個人助理）。第二輪四週結束（第 8 週）後依讀者興趣再排下一輪。
+  - 2026-11-28 世界模型入門：學一個『下一步會怎樣』的模型、用它規劃（隨機射擊 MPC），並看懂複合誤差（銜接第 7 週「多模態與機器人模型」之「VLA 與世界模型」的世界模型部分；當天 Sand AI MAGI-2 預訓練版湧現推理與 AgenTAP 點軌跡資料；toy_world_model.py（標準函式庫）已實際執行，課文數字皆為實際輸出）
+- 下一步：第 7 週「多模態與機器人模型」已上過「VLM 的視覺編碼器」（11/24）、「策略的輸入輸出／分層控制」（11/25，VLA 前置）與「機器人評測怎麼讀」（11/27），11/28 上了「世界模型入門」，接著是 VLA 本體（閱讀清單已累積 EgoX、ScaleVLA、Z-sight、AgentRoboCritic、SAFI、O²LaF、PGX、RoboTrack、Microduck、RoboQuest、AA-Robotics-Sim、AgenTAP 等）→ 第 8 週「個人知識庫與檢索」（embedding、RAG、agent 記憶；對應第二大腦筆記與個人助理）。第二輪四週結束（第 8 週）後依讀者興趣再排下一輪。
 - 未解問題：（使用者之後補充）
